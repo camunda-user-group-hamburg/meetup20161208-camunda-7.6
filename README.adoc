@@ -1,0 +1,3 @@
+# cughh-camunda76
+
+Example working with camunda 7.6.0
