@@ -18,6 +18,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
+import java.util.function.Function;
+
+import static org.camunda.bpm.engine.delegate.TaskListener.EVENTNAME_CREATE;
+import static org.camunda.bpm.extension.reactor.bus.SelectorBuilder.selector;
 
 @SpringBootApplication
 @EnableProcessApplication
@@ -29,6 +33,7 @@ public class SampleApplication {
         SpringApplication.run(SampleApplication.class, args);
     }
 
+
     @Autowired
     private RuntimeService runtimeService;
 
@@ -37,11 +42,17 @@ public class SampleApplication {
 
     private boolean increase;
 
+
     @PostConstruct
     public void postConstruct() {
-        eventBus.register(SelectorBuilder.selector().bpmn().task().event(TaskListener.EVENTNAME_CREATE), (TaskListener) task -> {
-            task.setName(String.format("%s (%s)", task.getName(), Optional.ofNullable(task.getVariable("count")).orElse(0)));
-        });
+        eventBus.register(selector().bpmn().task()
+                        .event(EVENTNAME_CREATE),
+                (TaskListener) task -> {
+                    task.setName(String.format("%s (%s)",
+                            task.getName(),
+                            Optional.ofNullable(task.getVariable("count"))
+                                    .orElse(0)));
+                });
     }
 
     @EventListener
@@ -54,7 +65,6 @@ public class SampleApplication {
         if (!increase) {
             return;
         }
-        log.info("increasing");
         runtimeService.createProcessInstanceQuery()
                 .processDefinitionKey("SampleProcess")
                 .list()
