@@ -1,0 +1,7 @@
+camunda-license.txt
+target/
+.classpath
+.project
+.settings/
+.idea
+*.iml

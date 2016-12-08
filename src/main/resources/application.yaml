@@ -1,0 +1,10 @@
+camunda:
+  bpm:
+    admin-user:
+      id: admin
+      password: holisticon
+    authorization:
+      enabled: true
+    filter:
+      create: All
+
